@@ -1,0 +1,46 @@
+from collections import deque
+
+locations = ['A', 'B', 'C']
+GOAL = ('C', 'C', True, True)
+
+def get_possible_actions(state):
+    monkey, box, on_box, has_banana = state
+    actions = []
+    if has_banana: return []
+    for loc in locations:
+        if loc != monkey: actions.append(('walk', loc))
+    if monkey == box and not on_box:
+        for loc in locations:
+            if loc != monkey: actions.append(('push', loc))
+    if monkey == box:
+        if not on_box: actions.append(('climb_up',))
+        else: actions.append(('climb_down',))
+    if monkey == 'C' and box == 'C' and on_box:
+        actions.append(('grab',))
+    return actions
+
+def apply_action(state, action):
+    monkey, box, on_box, has_banana = state
+    if action[0] == 'walk': return (action[1], box, False, has_banana)
+    elif action[0] == 'push': return (action[1], action[1], False, has_banana)
+    elif action[0] == 'climb_up': return (monkey, box, True, has_banana)
+    elif action[0] == 'climb_down': return (monkey, box, False, has_banana)
+    elif action[0] == 'grab': return (monkey, box, on_box, True)
+
+def solve(start_state):
+    queue = deque([(start_state, [])])
+    visited = {start_state}
+    while queue:
+        state, path = queue.popleft()
+        if state == GOAL: return path + [('Goal Reached!',)]
+        for action in get_possible_actions(state):
+            new_state = apply_action(state, action)
+            if new_state not in visited:
+                visited.add(new_state)
+                queue.append((new_state, path + [action]))
+    return None
+
+# Main
+start = (input("Monkey:"), input("Box:"), False, False)
+solution = solve(start)
+print(solution if solution else "No solution")
