@@ -1,0 +1,33 @@
+rooms = {'A': 'Dirty', 'B': 'Dirty', 'C': 'Dirty', 'D': 'Dirty'}
+room_order = ['A', 'B', 'C', 'D']
+agent_location = 'A'
+
+rules = {
+    ('A', 'Dirty'): 'Suck',
+    ('B', 'Dirty'): 'Suck',
+    ('C', 'Dirty'): 'Suck',
+    ('D', 'Dirty'): 'Suck',
+    ('A', 'Clean'): 'MoveNext',
+    ('B', 'Clean'): 'MoveNext',
+    ('C', 'Clean'): 'MoveNext',
+    ('D', 'Clean'): 'MoveNext'
+}
+
+def get_percept():
+    return agent_location, rooms[agent_location]
+
+def rule_match(percept):
+    return rules.get(percept, 'NoOp')
+
+def execute_action(action):
+    global agent_location
+    if action == 'Suck':
+        rooms[agent_location] = 'Clean'
+    elif action == 'MoveNext':
+        idx = room_order.index(agent_location)
+        agent_location = room_order[(idx + 1) % len(room_order)]
+
+for _ in range(10):
+    percept = get_percept()
+    action = rule_match(percept)
+    execute_action(action)
