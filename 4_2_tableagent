@@ -1,0 +1,25 @@
+A, B = 'A', 'B'
+percepts = []
+
+table = {
+    ((A, 'clean'),): 'right',
+    ((A, 'dirty'),): 'suck',
+    ((B, 'clean'),): 'left',
+    ((B, 'dirty'),): 'suck'
+    # extended mappings...
+}
+
+def lookup(percepts, table):
+    return table.get(tuple(percepts))
+
+def table_driven_agent(percept):
+    global percepts
+    percepts.append(percept)
+    return lookup(percepts, table)
+
+def run():
+    print(table_driven_agent((A, 'dirty')), percepts)
+    print(table_driven_agent((A, 'clean')), percepts)
+    print(table_driven_agent((B, 'dirty')), percepts)
+
+run()
