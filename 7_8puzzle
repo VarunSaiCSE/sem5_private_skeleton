@@ -1,0 +1,38 @@
+import heapq
+
+GOAL = [1,2,3,4,5,6,7,8,0]
+MOVES = [(-1,0),(1,0),(0,-1),(0,1)]  # U, D, L, R
+
+def manhattan(state):
+    dist = 0
+    for i in range(9):
+        if state[i] != 0:
+            goal = GOAL.index(state[i])
+            dist += abs(i//3 - goal//3) + abs(i%3 - goal%3)
+    return dist
+
+def neighbors(state):
+    res = []
+    z = state.index(0)
+    r, c = z//3, z%3
+    for dr, dc in MOVES:
+        nr, nc = r+dr, c+dc
+        if 0 <= nr < 3 and 0 <= nc < 3:
+            nz = nr*3 + nc
+            new = state[:]
+            new[z], new[nz] = new[nz], new[z]
+            res.append(new)
+    return res
+
+def astar(start):
+    open_list = [(manhattan(start), 0, start, [])]  # (f, g, state, path)
+    visited = {tuple(start)}
+    while open_list:
+        f, g, state, path = heapq.heappop(open_list)
+        if state == GOAL: return path+[state]
+        for neigh in neighbors(state):
+            if tuple(neigh) not in visited:
+                visited.add(tuple(neigh))
+                h = manhattan(neigh)
+                heapq.heappush(open_list, (g+1+h, g+1, neigh, path+[state]))
+    return None
