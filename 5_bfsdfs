@@ -1,0 +1,38 @@
+from collections import deque
+import heapq
+
+def bfs(graph, start, goal):
+    queue = deque([(start, [start])])
+    visited = set()
+    while queue:
+        node, path = queue.popleft()
+        if node == goal: return path
+        if node not in visited:
+            visited.add(node)
+            for neigh in graph[node]:
+                queue.append((neigh, path + [neigh]))
+    return None
+
+def dfs(graph, start, goal):
+    stack = [(start, [start])]
+    visited = set()
+    while stack:
+        node, path = stack.pop()
+        if node == goal: return path
+        if node not in visited:
+            visited.add(node)
+            for neigh in reversed(graph[node]):
+                stack.append((neigh, path + [neigh]))
+    return None
+
+def ucs(graph, start, goal):
+    heap = [(0, start, [start])]
+    visited = {}
+    while heap:
+        cost, node, path = heapq.heappop(heap)
+        if node == goal: return path, cost
+        if node not in visited or cost < visited[node]:
+            visited[node] = cost
+            for neigh, w in graph[node]:
+                heapq.heappush(heap, (cost + w, neigh, path + [neigh]))
+    return None, float('inf')
