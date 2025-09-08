@@ -1,0 +1,31 @@
+from collections import deque, math
+
+def is_goal(j1, j2, goal):
+    return j1 == goal or j2 == goal
+
+def water_jug(cap1, cap2, goal):
+    visited = set()
+    queue = deque([(0, 0)])
+    while queue:
+        j1, j2 = queue.popleft()
+        if is_goal(j1, j2, goal):
+            print(j1, j2); return
+        visited.add((j1, j2))
+        states = [
+            (cap1, j2), (j1, cap2),
+            (0, j2), (j1, 0),
+            (j1 - min(j1, cap2 - j2), j2 + min(j1, cap2 - j2)),
+            (j1 + min(j2, cap1 - j1), j2 - min(j2, cap1 - j1))
+        ]
+        for s in states:
+            if s not in visited:
+                queue.append(s); visited.add(s)
+    print("No solution")
+
+def main():
+    cap1 = int(input("Jug1: "))
+    cap2 = int(input("Jug2: "))
+    goal = int(input("Goal: "))
+    if goal > max(cap1, cap2): return
+    if goal % math.gcd(cap1, cap2) != 0: return
+    water_jug(cap1, cap2, goal)
